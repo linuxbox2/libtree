@@ -261,6 +261,42 @@ struct avltree_node *avltree_lookup(const struct avltree_node *key,
 	return do_lookup(key, tree, &parent, &unbalanced, &is_left);
 }
 
+struct avltree_node *avltree_sup(const struct avltree_node *key,
+				 const struct avltree *tree,
+				 struct avltree_node **sup)
+{
+    struct avltree_node *parent, *csup, *unbalanced;
+    struct avltree_node *node = tree->root;
+    int is_left = 0;
+    int res = 0;
+
+    csup = avltree_first(tree); /* at worst, the first entry */
+    unbalanced = node;
+    parent = NULL;
+    is_left = 0;
+
+    while (node) {
+	if (get_balance(node) != 0)
+	    unbalanced = node;
+	res = tree->cmp_fn(node, key);
+	if (res == 0)
+	    return node;
+	else if (res < 1) /* sup is less than key */
+	    csup = node;
+	parent = node;
+	if ((is_left = res > 0))
+	    node = node->left;
+	else
+	    node = node->right;
+    } /* while */
+
+    /* pass up the glb */
+    if (sup)
+	*sup = csup;
+
+    return NULL;
+}
+
 static void set_child(struct avltree_node *child,
 		      struct avltree_node *node, int left)
 {
