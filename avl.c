@@ -167,6 +167,10 @@ struct avltree_node *avltree_prev(const struct avltree_node *node)
 	return parent;
 }
 
+uint64_t avltree_size(const struct avltree *tree)
+{
+    return tree->size;
+}
 
 /*
  * The AVL tree is more rigidly balanced than Red-Black trees, leading
@@ -346,6 +350,9 @@ struct avltree_node *avltree_insert(struct avltree_node *node, struct avltree *t
 		parent = get_parent(parent);
 	}
 
+	/* inserted */
+	tree->size++;
+
 	switch (get_balance(unbalanced)) {
 	case  1: case -1:
 		tree->height++;
@@ -468,6 +475,9 @@ void avltree_remove(struct avltree_node *node, struct avltree *tree)
 	if (node)
 		set_parent(parent, node);
 
+	/* removed */
+	tree->size--;
+
 	/*
 	 * At this point, 'parent' can only be null, if 'node' is the
 	 * tree's root and has at most one child.
@@ -586,8 +596,13 @@ void avltree_replace(struct avltree_node *old, struct avltree_node *new,
 
 	if (parent)
 		set_child(parent, new, parent->left == old);
-	else
-		tree->root = new;
+	else {
+	    /* I'm skeptical this case should be permitted--this
+	     * says that if old is not in the tree, just make new
+	     * the root of the tree */
+	      tree->root = new;
+	      tree->size++;
+	}
 
 	if (old->left)
 		set_parent(new, old->left);
@@ -611,5 +626,6 @@ int avltree_init(struct avltree *tree, avltree_cmp_fn_t cmp, unsigned long flags
 	tree->height = -1;
 	tree->first = NULL;
 	tree->last = NULL;
+	tree->size = 0;
 	return 0;
 }

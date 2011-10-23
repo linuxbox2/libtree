@@ -162,14 +162,17 @@ struct avltree {
 	avltree_cmp_fn_t cmp_fn;
 	int height;
 	struct avltree_node *first, *last;
+	uint64_t size;
+#if 0
 	uint64_t reserved[4];
+#endif
 };
 
 struct avltree_node *avltree_first(const struct avltree *tree);
 struct avltree_node *avltree_last(const struct avltree *tree);
 struct avltree_node *avltree_next(const struct avltree_node *node);
 struct avltree_node *avltree_prev(const struct avltree_node *node);
-
+uint64_t avltree_size(const struct avltree *tree);
 struct avltree_node *avltree_lookup(const struct avltree_node *key, const struct avltree *tree);
 struct avltree_node *avltree_sup(const struct avltree_node *key,
 				 const struct avltree *tree,

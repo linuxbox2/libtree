@@ -5,10 +5,12 @@ VERS_0.0 {
 		*tree_remove;
 		*tree_replace;
 		*tree_lookup;
+		*tree_sup;
 		*tree_first;
 		*tree_last;
 		*tree_next;
 		*tree_prev;
+	        *tree_size;
 	 local:
 		*;
 };
