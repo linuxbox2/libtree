@@ -265,16 +265,16 @@ struct avltree_node *avltree_lookup(const struct avltree_node *key,
 	return do_lookup(key, tree, &parent, &unbalanced, &is_left);
 }
 
-struct avltree_node *avltree_sup(const struct avltree_node *key,
+struct avltree_node *avltree_inf(const struct avltree_node *key,
 				 const struct avltree *tree,
-				 struct avltree_node **sup)
+				 struct avltree_node **glb)
 {
-    struct avltree_node *parent, *csup, *unbalanced;
+    struct avltree_node *parent, *lb, *unbalanced;
     struct avltree_node *node = tree->root;
     int is_left = 0;
     int res = 0;
 
-    csup = avltree_first(tree); /* at worst, the first entry */
+    lb = avltree_first(tree); /* at worst, the first entry */
     unbalanced = node;
     parent = NULL;
     is_left = 0;
@@ -285,8 +285,8 @@ struct avltree_node *avltree_sup(const struct avltree_node *key,
 	res = tree->cmp_fn(node, key);
 	if (res == 0)
 	    return node;
-	else if (res < 1) /* sup is less than key */
-	    csup = node;
+	else if (res < 1) /* lb is less than key */
+	    lb = node;
 	parent = node;
 	if ((is_left = res > 0))
 	    node = node->left;
@@ -295,8 +295,8 @@ struct avltree_node *avltree_sup(const struct avltree_node *key,
     } /* while */
 
     /* pass up the glb */
-    if (sup)
-	*sup = csup;
+    if (lb)
+	*glb = lb;
 
     return NULL;
 }
@@ -326,6 +326,7 @@ struct avltree_node *avltree_insert(struct avltree_node *node, struct avltree *t
 		tree->root = node;
 		tree->first = tree->last = node;
 		tree->height++;
+		tree->size++;
 		return NULL;
 	}
 	if (is_left) {

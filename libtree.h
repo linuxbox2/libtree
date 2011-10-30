@@ -174,9 +174,9 @@ struct avltree_node *avltree_next(const struct avltree_node *node);
 struct avltree_node *avltree_prev(const struct avltree_node *node);
 uint64_t avltree_size(const struct avltree *tree);
 struct avltree_node *avltree_lookup(const struct avltree_node *key, const struct avltree *tree);
-struct avltree_node *avltree_sup(const struct avltree_node *key,
+struct avltree_node *avltree_inf(const struct avltree_node *key,
 				 const struct avltree *tree,
-				 struct avltree_node **sup);
+				 struct avltree_node **glb);
 struct avltree_node *avltree_insert(struct avltree_node *node, struct avltree *tree);
 void avltree_remove(struct avltree_node *node, struct avltree *tree);
 void avltree_replace(struct avltree_node *old, struct avltree_node *new, struct avltree *tree);
